@@ -1,0 +1,12 @@
+---
+- name: Provision
+  hosts: all
+  become: true
+  become_user: root
+  roles:
+    - role: swap
+      tags: swap
+    - role: gitlab-ce
+      tags: gitlab-ce
+    - role: gitlab-runner
+      tags: gitlab-runner

@@ -1,0 +1,6 @@
+# https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/8/html/managing_storage_devices/recommended-system-swap-space_getting-started-with-swap
+swapfile_size_mb: 1024
+
+## アクセスするIPアドレス、DNSを記載します。
+## domain: 192.168.0.1
+domain:

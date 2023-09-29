@@ -1,0 +1,17 @@
+---
+- name: Add repository for GitLabCE
+  ansible.builtin.shell:
+    cmd: curl -L https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | os=amazon dist=2023 bash
+
+- name: Install GitLabCE
+  ansible.builtin.dnf:
+    name: gitlab-ce
+    state: present
+
+- name: config url
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb  # 対象のファイルパスを指定します。
+    regexp: "external_url 'http://gitlab.example.com'"  # 置換対象の正規表現パターンを指定します。
+    replace: "external_url 'http://{{ domain }}'"  # 置換後の文字列を指定します。
+    backup: yes  # バックアップファイルを作成する場合はyesに設定します。
+  notify: reconfigure gitlab

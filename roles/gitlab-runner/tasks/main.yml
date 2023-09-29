@@ -1,0 +1,9 @@
+---
+- name: Add repository for GitLab runner
+  ansible.builtin.shell:
+    cmd: curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | os=amazon dist=2023 bash
+
+- name: Install GitLab runner
+  ansible.builtin.dnf:
+    name: gitlab-runner
+    state: present

@@ -1,0 +1,39 @@
+---
+# https://access.redhat.com/documentation/ja-jp/red_hat_enterprise_linux/8/html/managing_storage_devices/creating-a-swap-file_getting-started-with-swap
+- name: Setting swap file path
+  ansible.builtin.set_fact:
+    swap_file_path: /swapfile
+
+- name: Zero padding
+  ansible.builtin.command: dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ swapfile_size_mb }}
+  args:
+    creates: '{{ swap_file_path }}'
+
+- name: Set up a Linux swap area
+  ansible.builtin.command: mkswap {{ swap_file_path }}
+  changed_when: ansible_swaptotal_mb != 0
+  when: ansible_swaptotal_mb == 0
+
+- name: Chmod swap file
+  ansible.builtin.file:
+    path: '{{ swap_file_path }}'
+    mode: '0600'
+
+- name: Mount swap
+  ansible.posix.mount:
+    name: swap
+    src: '{{ swap_file_path }}'
+    fstype: swap
+    opts: defaults
+    passno: '0'
+    dump: '0'
+    state: present
+
+- name: Just force systemd to re-execute itself (2.8 and above)
+  ansible.builtin.systemd:
+    daemon_reexec: true
+
+- name: Enable file for swapping
+  ansible.builtin.command: swapon {{ swap_file_path }}
+  changed_when: ansible_swaptotal_mb != 0
+  when: ansible_swaptotal_mb == 0
